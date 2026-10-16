@@ -34,21 +34,33 @@ async function runE2EAudit() {
     const testApp = initializeApp(config, 'audit-auth-' + Date.now());
     const auth = getAuth(testApp);
 
-    try {
-      await signInWithEmailAndPassword(auth, 'audit@example.com', 'AuditPass123!');
-      record('Authentication', 'Firebase Email/Password Login', 'PASS', 'Provider active and evaluating credentials');
-    } catch (authErr: any) {
-      if (authErr.code === 'auth/operation-not-allowed') {
-        record(
-          'Authentication',
-          'Firebase Email/Password Login & Signup',
-          'NOT VERIFIED',
-          'Awaiting toggle in Firebase Console > Authentication > Sign-in method (code: auth/operation-not-allowed)'
-        );
-      } else if (authErr.code === 'auth/invalid-credential' || authErr.code === 'auth/user-not-found') {
-        record('Authentication', 'Firebase Email/Password Login & Signup', 'PASS', 'Provider active and processing requests');
-      } else {
-        record('Authentication', 'Firebase Email/Password Login & Signup', 'NOT VERIFIED', `Auth status code: ${authErr.code}`);
+    const testEmail = process.env.TEST_AUTH_EMAIL;
+    const testPassword = process.env.TEST_AUTH_PASSWORD;
+
+    if (!testEmail || !testPassword) {
+      record(
+        'Authentication',
+        'Firebase Email/Password Login & Signup',
+        'NOT VERIFIED',
+        'Optional TEST_AUTH_EMAIL and TEST_AUTH_PASSWORD environment variables not set; skipped live credential attempt safely without hardcoded passwords'
+      );
+    } else {
+      try {
+        await signInWithEmailAndPassword(auth, testEmail, testPassword);
+        record('Authentication', 'Firebase Email/Password Login & Signup', 'PASS', 'Provider active and evaluating credentials');
+      } catch (authErr: any) {
+        if (authErr.code === 'auth/operation-not-allowed') {
+          record(
+            'Authentication',
+            'Firebase Email/Password Login & Signup',
+            'NOT VERIFIED',
+            'Awaiting toggle in Firebase Console > Authentication > Sign-in method (code: auth/operation-not-allowed)'
+          );
+        } else if (authErr.code === 'auth/invalid-credential' || authErr.code === 'auth/user-not-found') {
+          record('Authentication', 'Firebase Email/Password Login & Signup', 'PASS', 'Provider active and processing requests');
+        } else {
+          record('Authentication', 'Firebase Email/Password Login & Signup', 'NOT VERIFIED', `Auth status code: ${authErr.code}`);
+        }
       }
     }
   } catch (err: any) {

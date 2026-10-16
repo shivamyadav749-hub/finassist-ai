@@ -163,55 +163,23 @@ export const AuthView: React.FC<AuthViewProps> = ({
 
   const handleDemoSignIn = async (demoEmail: string, name: string, comp: string) => {
     setEmail(demoEmail);
-    const demoPassword = 'demoSecurePass2026!';
-    setPassword(demoPassword);
+    setPassword('');
     setIsLoading(true);
     setErrorMessage(null);
 
     try {
-      let fbUser;
-      try {
-        const res = await signInWithEmailAndPassword(auth, demoEmail, demoPassword);
-        fbUser = res.user;
-      } catch (signInErr: any) {
-        if (
-          signInErr.code === 'auth/user-not-found' ||
-          signInErr.code === 'auth/invalid-credential'
-        ) {
-          const createRes = await createUserWithEmailAndPassword(auth, demoEmail, demoPassword);
-          fbUser = createRes.user;
-          try {
-            await updateProfile(fbUser, { displayName: name });
-          } catch (e) {
-            // ignore
-          }
-        } else {
-          throw signInErr;
-        }
-      }
-
-      const synced = await syncUserProfileToFirestore(fbUser, name, comp);
-      const userProfile: UserProfile = {
-        id: fbUser.uid,
-        email: fbUser.email || demoEmail,
-        fullName: name || fbUser.displayName || 'Demo Executive',
-        companyName: comp || synced.companyName || 'Institutional Workspace',
+      // Provision an isolated evaluation demo workspace profile without exposing or hardcoding passwords
+      const demoProfile: UserProfile = {
+        id: `demo_${demoEmail.split('@')[0]}`,
+        email: demoEmail,
+        fullName: name,
+        companyName: comp,
         role: 'Managing Director',
       };
+      onLoginSuccess(demoProfile);
+      onNavigate('dashboard');
     } catch (err: any) {
-      console.warn('Demo login notice (Firebase Auth provider status):', err?.code || err);
-      if (err?.code === 'auth/operation-not-allowed') {
-        const fallbackProfile: UserProfile = {
-          id: 'demo_executive_usr',
-          email: demoEmail,
-          fullName: name,
-          companyName: comp,
-          role: 'Managing Director',
-        };
-        onLoginSuccess(fallbackProfile);
-        onNavigate('dashboard');
-        return;
-      }
+      console.warn('Demo login error:', err?.message || err);
       setErrorMessage(getCleanAuthErrorMessage(err));
     } finally {
       setIsLoading(false);

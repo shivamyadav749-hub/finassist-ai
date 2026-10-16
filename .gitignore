@@ -1,8 +1,28 @@
+# Dependencies
 node_modules/
-build/
+
+# Production build outputs
 dist/
+build/
 coverage/
+
+# OS and runtime files
 .DS_Store
 *.log
-.env*
+*.log.*
+
+# Environment and secrets configuration
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
+
+# Local Firebase applet configuration (contains active project IDs and keys)
+firebase-applet-config.json
+!firebase-applet-config.example.json
+
+# Internal AI Studio build artifacts and brain logs
+.aistudio/
