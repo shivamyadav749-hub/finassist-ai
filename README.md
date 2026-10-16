@@ -1,11 +1,18 @@
-<div align="center">
+Create a professional README.md for my existing FinAssist AI project.
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Include:
+1. Project overview
+2. Problem statement
+3. Key features
+4. Technology stack
+5. Firebase Authentication setup
+6. Firestore database structure
+7. Local development instructions
+8. Environment variables required, using placeholders only
+9. Testing instructions
+10. Current limitations and future improvements
 
-  <h1>Built with AI Studio</h2>
+Do not include real API keys, passwords, tokens, personal data,
+or confidential Firebase credentials.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+Do not modify the application UI or existing functionality.
