@@ -1,0 +1,99 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Healthcheck connection test rule
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // Global Safety Net: Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation helper for UserProfile
+    function isValidUserProfile(data, userId) {
+      return data.userId is string && data.userId == userId &&
+        data.email is string && data.email.size() <= 256 &&
+        (!('fullName' in data) || (data.fullName is string && data.fullName.size() <= 128)) &&
+        (!('companyName' in data) || (data.companyName is string && data.companyName.size() <= 128)) &&
+        (!('role' in data) || (data.role is string && data.role.size() <= 64));
+    }
+
+    // Validation helper for Transaction
+    function isValidTransaction(data, userId) {
+      return data.userId is string && data.userId == userId &&
+        data.counterparty is string && data.counterparty.size() <= 128 &&
+        data.amount is number &&
+        data.status in ['settled', 'pending', 'flagged'] &&
+        (!('category' in data) || (data.category is string && data.category.size() <= 64)) &&
+        (!('refId' in data) || (data.refId is string && data.refId.size() <= 64)) &&
+        (!('currency' in data) || (data.currency is string && data.currency.size() <= 10)) &&
+        (!('date' in data) || (data.date is string && data.date.size() <= 64)) &&
+        (!('isDemo' in data) || data.isDemo is bool) &&
+        (!('paymentMethod' in data) || (data.paymentMethod is string && data.paymentMethod.size() <= 64)) &&
+        (!('anomalyReason' in data) || (data.anomalyReason is string && data.anomalyReason.size() <= 256));
+    }
+
+    // Validation helper for Disbursement
+    function isValidDisbursement(data, userId) {
+      return data.userId is string && data.userId == userId &&
+        data.title is string && data.title.size() <= 128 &&
+        data.amount is number &&
+        data.status in ['Settled', 'Denied', 'Pending'] &&
+        (!('txId' in data) || (data.txId is string && data.txId.size() <= 64)) &&
+        (!('currency' in data) || (data.currency is string && data.currency.size() <= 10)) &&
+        (!('method' in data) || (data.method is string && data.method.size() <= 64));
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming(), userId);
+      allow update: if isOwner(userId) && isValidUserProfile(incoming(), userId) &&
+        incoming().userId == existing().userId;
+      allow delete: if false;
+
+      // Transactions sub-collection
+      match /transactions/{transactionId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(transactionId) && isValidTransaction(incoming(), userId);
+        allow update: if isOwner(userId) && isValidTransaction(incoming(), userId) &&
+          incoming().userId == existing().userId;
+        allow delete: if isOwner(userId);
+      }
+
+      // Disbursements sub-collection
+      match /disbursements/{disbursementId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(disbursementId) && isValidDisbursement(incoming(), userId);
+        allow update: if isOwner(userId) && isValidDisbursement(incoming(), userId) &&
+          incoming().userId == existing().userId;
+        allow delete: if false;
+      }
+    }
+  }
+}

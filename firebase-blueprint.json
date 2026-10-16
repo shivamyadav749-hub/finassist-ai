@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with enterprise company details and role",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Unique identifier of the user",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "Corporate email address",
+          "maxLength": 256
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full name of user",
+          "maxLength": 128
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name",
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "description": "Corporate title or executive role",
+          "maxLength": 64
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation",
+          "maxLength": 64
+        }
+      },
+      "required": ["userId", "email"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial ledger entry for income or expense",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document ID",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user ID",
+          "maxLength": 128
+        },
+        "refId": {
+          "type": "string",
+          "description": "Reference identifier e.g. TXN-99824",
+          "maxLength": 64
+        },
+        "counterparty": {
+          "type": "string",
+          "description": "Vendor or client name",
+          "maxLength": 128
+        },
+        "category": {
+          "type": "string",
+          "description": "Spend or income category",
+          "maxLength": 64
+        },
+        "amount": {
+          "type": "number",
+          "description": "Transaction amount in currency units"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code e.g. INR or USD",
+          "maxLength": 10
+        },
+        "date": {
+          "type": "string",
+          "description": "Human readable date label",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "description": "Settlement state: settled, pending, or flagged",
+          "enum": ["settled", "pending", "flagged"]
+        },
+        "anomalyReason": {
+          "type": "string",
+          "description": "AI flagged explanation if anomalous",
+          "maxLength": 256
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Payment instrument or clearing channel",
+          "maxLength": 64
+        },
+        "isDemo": {
+          "type": "boolean",
+          "description": "Whether transaction is seed demo or user live"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of creation",
+          "maxLength": 64
+        }
+      },
+      "required": ["userId", "counterparty", "amount", "status"]
+    },
+    "Disbursement": {
+      "title": "Disbursement",
+      "description": "PayPal sandbox disbursement record",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document ID",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user ID",
+          "maxLength": 128
+        },
+        "txId": {
+          "type": "string",
+          "description": "PayPal transaction or order ID",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Disbursement title",
+          "maxLength": 128
+        },
+        "amount": {
+          "type": "number",
+          "description": "Disbursement amount"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code",
+          "maxLength": 10
+        },
+        "method": {
+          "type": "string",
+          "description": "Payment method e.g. PayPal Express",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "description": "Settled, Denied, or Pending",
+          "enum": ["Settled", "Denied", "Pending"]
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Relative or ISO timestamp",
+          "maxLength": 64
+        }
+      },
+      "required": ["userId", "title", "amount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile records indexed by auth UID"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "User ledger transactions"
+    },
+    "/users/{userId}/disbursements/{disbursementId}": {
+      "schema": "Disbursement",
+      "description": "User PayPal sandbox disbursements"
+    }
+  }
+}

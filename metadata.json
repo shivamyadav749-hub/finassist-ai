@@ -1,0 +1,6 @@
+{
+  "name": "FinAssist AI",
+  "description": "Autonomous financial intelligence for growing businesses featuring real-time cash runway forecasting, AI Copilot, anomaly detection, transaction ledger, and PayPal sandbox integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
