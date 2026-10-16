@@ -224,7 +224,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <div className="text-[11px] text-[#006c4a] font-semibold flex items-center gap-1">
             <span className="material-symbols-outlined text-[14px]">verified</span>
-            <span>99.8% AI sync</span>
+            <span>Real-time AI sync</span>
           </div>
         </div>
       </div>

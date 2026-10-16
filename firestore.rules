@@ -3,11 +3,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Healthcheck connection test rule
-    match /test/{docId} {
-      allow read: if true;
-    }
-
     // Global Safety Net: Default Deny All
     match /{document=**} {
       allow read, write: if false;

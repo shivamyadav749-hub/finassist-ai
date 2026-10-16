@@ -284,7 +284,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
             <div className="bg-[#ffffff] rounded-lg p-3.5 flex items-center justify-between shadow-sm">
               <div>
                 <div className="text-[22px] font-bold text-[#006c4a] tabular-nums">99.8%</div>
-                <div className="text-[12px] text-[#434655]">AI Reconciliation Accuracy</div>
+                <div className="text-[12px] text-[#434655]">Target Reconciliation Accuracy</div>
               </div>
               <span className="material-symbols-outlined text-[#006c4a] text-[28px]">check_circle</span>
             </div>
@@ -436,7 +436,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
           <button onClick={() => onOpenInfoModal('contact')} className="hover:text-[#131b2e]">Contact</button>
         </div>
         <p className="text-[12px] text-[#434655]">© 2024 FinAssist AI, Inc. Institutional Precision.</p>
-        <p className="text-[10px] text-[#747686] mt-0.5">SOC2 Type II Certified Financial Core</p>
+        <p className="text-[10px] text-[#747686] mt-0.5">256-bit Encrypted Cloud Financial Architecture</p>
       </footer>
     </div>
   );

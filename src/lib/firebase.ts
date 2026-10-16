@@ -83,14 +83,26 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Test connection on boot
+// Safe healthcheck connection test without requiring public read rules
 export async function testFirestoreConnection(): Promise<boolean> {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    await getDocFromServer(doc(db, '_healthcheck', 'ping'));
     return true;
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('Firestore offline check: please check configuration or network.');
+  } catch (error: any) {
+    if (error instanceof Error) {
+      // PERMISSION_DENIED confirms the client successfully reached the live Firestore server
+      // and security rules are actively enforced.
+      if (
+        error.message.includes('permission-denied') ||
+        error.message.includes('PERMISSION_DENIED') ||
+        error.code === 'permission-denied'
+      ) {
+        return true;
+      }
+      if (error.message.includes('the client is offline') || error.message.includes('unavailable')) {
+        console.warn('Firestore offline check: please check configuration or network.');
+        return false;
+      }
     }
     return false;
   }

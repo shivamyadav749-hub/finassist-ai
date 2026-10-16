@@ -116,7 +116,7 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
                 Financial Health
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#85f8c4] text-[#005137]">
-                AAA Tier
+                Strong (Model Estimate)
               </span>
             </div>
             <div className="flex items-baseline gap-2 mt-0.5">
