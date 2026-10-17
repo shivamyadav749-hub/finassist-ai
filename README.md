@@ -1,7 +1,8 @@
 # FinAssist AI — Autonomous Enterprise Financial Intelligence
 
 FinAssist AI is an autonomous financial operations platform designed for high-growth enterprises and startups. It bridges real-time banking telemetry, automated transaction anomaly shields, and generative scenario modeling powered by Google Gemini to help executive teams anticipate cash burn shocks, eliminate duplicate SaaS expenses, and protect runway.
-
+## 🌐 Live Demo
+🚀 **Try FinAssist AI:** https://finassist-ai-2.ai.studio
 ---
 
 ## 1. Project Overview
